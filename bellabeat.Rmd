@@ -1,0 +1,101 @@
+
+---
+title: "bellabeat_project"
+author: "Priyanka Dwivedi"
+date:   "07/02/22"
+output: html_document
+---
+
+## Introduction
+explores smart device user's daily habits by using **public data-
+FitBit Fitness Tracker Data**. This Kaggle data set contains personal fitness tracker from thirty fitbit users. It includes information about daily activity, steps, and weight information that can be used to explore user's habits.
+
+### Objective
+* Analyze smart device usage data in order to gain insight.
+* Identify some trends in smart device usage.
+* How could these trends apply to Bellabeat customers?
+
+### Prepare Data
+
+```{r}
+install.packages("tidyverse")
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(readr)
+```
+```{r warning=FALSE, echo=FALSE,results='hide'}
+read.csv("dailyActivity_merged.csv")
+read.csv("sleepDay_merged.csv")
+read.csv("weightLogInfo_merged.csv")
+
+```
+### Processing of data
+```{r warning=FALSE}
+daily_activity<- read.csv("dailyActivity_merged.csv")
+```
+```{r warning=FALSE}
+sleep_day<- read.csv("sleepDay_merged.csv")
+```
+```{r warning=FALSE}
+weight_loginfo<- read.csv("weightLogInfo_merged.csv")
+```
+### analysis of data
+```{r}
+Daily_Activity<- select(daily_activity, Id, TotalDistance, SedentaryMinutes)
+```
+```{r}
+Weight<- distinct(weight_loginfo, Id, WeightKg)
+```
+```{r}
+Sleep<- select(sleep_day,Id, TotalSleepRecords, TotalMinutesAsleep, TotalTimeInBed)
+```
+```{r}
+combined<- merge(Daily_Activity, Weight)
+combined_full_data<- merge(combined, Sleep)
+```
+### Realtion between distance covered by person and sleep
+
+```{r}
+ggplot(data=combined_full_data)+
+  geom_point(mapping=aes(x=TotalDistance, y=TotalMinutesAsleep,color=TotalMinutesAsleep))+
+  geom_smooth(mapping=aes(x=TotalDistance, y=TotalMinutesAsleep),color="purple")+
+  labs(title="Relation between Distance covered and Sleep")
+```
+
+
+If some distance cover daily  by person then their sleep is also balanced.
+___________________________________________________________________________________
+
+### Relation between sedentary time and weight
+```{r}
+ggplot(data=combined_full_data)+
+  geom_smooth(mapping=aes(x=SedentaryMinutes, y=WeightKg),color="black")+
+  labs(title="Relation between sedentary time and weight of person")+
+  geom_point(mapping=aes(x=SedentaryMinutes, y=WeightKg, color=WeightKg))
+
+```
+
+
+if *Sedentary time of person is less then their weight is balanced.*
+___________________________________________________________________________________
+
+### Relation between distance covered and weight
+
+```{r}
+ggplot(data=combined_full_data)+
+  geom_smooth(mapping=aes(x=TotalDistance, y=WeightKg),color="black")+
+  labs(title="Relation between weight and distance covered daily")
+  
+```
+
+
+
+if distance is covered daily then *person is active then weight is also balanced*.
+___________________________________________________________________________________
+
+### Conclusion 
+If person is active and cover some distance daily and  their sedentary time is less hen their sleep and weight both are balanced and person is healthy.
+
+
+
